@@ -1,4 +1,4 @@
-const CACHE_NAME = 'monify-static-v3'
+const CACHE_NAME = 'monify-static-v4'
 const STATIC_ASSETS = [
   '/',
   '/offline.html',
@@ -60,14 +60,19 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // 3. Với request điều hướng trang (HTML navigation): Network-first, fallback sang offline.html hoặc cache /
-  if (event.request.mode === 'navigate') {
+  // 3. Với request điều hướng trang (HTML navigation): Network-first, fallback sang cache / hoặc offline.html
+  const isHtmlRequest =
+    event.request.mode === 'navigate' ||
+    event.request.destination === 'document' ||
+    (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html'))
+
+  if (isHtmlRequest) {
     event.respondWith(
       fetch(event.request).catch(async () => {
-        const offlineMatch = await caches.match('/offline.html')
-        if (offlineMatch) return offlineMatch
         const rootMatch = await caches.match('/')
         if (rootMatch) return rootMatch
+        const offlineMatch = await caches.match('/offline.html')
+        if (offlineMatch) return offlineMatch
         return new Response('Ứng dụng hiện đang ngoại tuyến. Vui lòng kiểm tra lại kết nối mạng.', {
           status: 503,
           headers: { 'Content-Type': 'text/plain; charset=utf-8' },
@@ -91,6 +96,10 @@ self.addEventListener('fetch', (event) => {
         return networkResponse
       } catch {
         if (cachedResponse) return cachedResponse
+        if (isHtmlRequest) {
+          const rootMatch = await caches.match('/')
+          if (rootMatch) return rootMatch
+        }
         // Fallback response thay vì undefined để tránh crash Service Worker
         return new Response(null, { status: 404, statusText: 'Not Found in Cache' })
       }

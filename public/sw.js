@@ -1,4 +1,4 @@
-const CACHE_NAME = 'monify-static-v1'
+const CACHE_NAME = 'monify-static-v2'
 const STATIC_ASSETS = [
   '/',
   '/offline.html',
@@ -40,10 +40,14 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url)
 
-  // 1. TUYỆT ĐỐI KHÔNG lưu đệm API (/api/*) hoặc Firebase Realtime Database
+  // 1. Chỉ xử lý request cùng origin (same-origin), bỏ qua hoàn toàn các dịch vụ bên thứ 3 (Google Auth, Firebase, CDN...)
+  if (url.origin !== self.location.origin) {
+    return
+  }
+
+  // 2. TUYỆT ĐỐI KHÔNG lưu đệm API (/api/*) hoặc WebSocket
   if (
     url.pathname.startsWith('/api/') ||
-    url.hostname.includes('firebaseio.com') ||
     url.protocol.startsWith('ws')
   ) {
     // Network-only cho API và dữ liệu tài chính

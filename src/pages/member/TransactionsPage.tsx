@@ -252,10 +252,10 @@ export function TransactionsPage() {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Sổ giao dịch</h1>
-          <p className="text-sm text-muted-foreground">Theo dõi mọi khoản thu, chi và chuyển tiền</p>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Sổ giao dịch</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">Theo dõi mọi khoản thu, chi và chuyển tiền</p>
         </div>
         <Button
           onClick={() => {
@@ -263,9 +263,9 @@ export function TransactionsPage() {
             setIsDialogOpen(true)
           }}
           variant="brand"
-          className="flex items-center gap-2 touch-target w-full sm:w-auto"
+          className="flex items-center gap-1.5 sm:gap-2 touch-target shrink-0 h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
           <span>Thêm giao dịch</span>
         </Button>
       </div>
@@ -384,16 +384,16 @@ export function TransactionsPage() {
 
       {/* Summary Box (Thu & Chi theo bộ lọc hiện tại) */}
       {transactions.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-card border border-border shadow-sm text-sm">
-          <div>
+        <div className="grid grid-cols-2 gap-3 p-3 sm:p-3.5 rounded-xl bg-card border border-border shadow-xs text-sm">
+          <div className="min-w-0">
             <span className="text-xs text-muted-foreground block font-medium">Tổng chi tiêu</span>
-            <span className="text-base font-bold text-destructive">
+            <span className="text-sm sm:text-base font-bold text-destructive truncate block">
               -{formatCurrency(summary.expense)}
             </span>
           </div>
-          <div>
+          <div className="min-w-0">
             <span className="text-xs text-muted-foreground block font-medium">Tổng thu nhập</span>
-            <span className="text-base font-bold text-emerald-500">
+            <span className="text-sm sm:text-base font-bold text-emerald-500 truncate block">
               +{formatCurrency(summary.income)}
             </span>
           </div>

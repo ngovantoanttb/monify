@@ -74,7 +74,7 @@ export function ChangePasswordDialog({ isOpen, onClose }: ChangePasswordDialogPr
 
   const content = (
     <div
-      className="fixed inset-0 top-0 left-0 right-0 bottom-0 !m-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 top-0 left-0 right-0 bottom-0 !m-0 z-[100] w-screen h-screen bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
       style={{ top: 0, left: 0, right: 0, bottom: 0, margin: 0 }}
       onClick={handleClose}
     >

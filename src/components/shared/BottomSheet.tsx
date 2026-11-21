@@ -1,4 +1,5 @@
 import React from 'react'
+import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
 
 interface BottomSheetProps {
@@ -11,9 +12,9 @@ interface BottomSheetProps {
 export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetProps) {
   if (!isOpen) return null
 
-  return (
+  const content = (
     <div
-      className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex flex-col justify-end md:justify-center md:items-center p-3 pb-[max(5.5rem,calc(env(safe-area-inset-bottom)+4.5rem))] md:p-4"
+      className="fixed inset-0 top-0 left-0 right-0 bottom-0 !m-0 z-[70] w-screen h-screen bg-black/60 backdrop-blur-sm flex flex-col justify-end md:justify-center md:items-center p-3 pb-[max(5.5rem,calc(env(safe-area-inset-bottom)+4.5rem))] md:p-4"
       onClick={onClose}
     >
       <div
@@ -37,4 +38,10 @@ export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetPro
       </div>
     </div>
   )
+
+  if (typeof document !== 'undefined') {
+    return createPortal(content, document.body)
+  }
+
+  return content
 }

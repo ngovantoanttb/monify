@@ -54,52 +54,68 @@ export function BudgetCard({
     : 0
 
   return (
-    <Card className="p-4 space-y-3 hover:shadow-xs transition-shadow border-border/70">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5 min-w-0">
+    <Card className="p-3.5 sm:p-4 space-y-3 hover:shadow-xs transition-shadow border-border/70">
+      <div className="flex items-center justify-between gap-2.5">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-xs"
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-xs"
             style={{ backgroundColor: category.color }}
           >
             {category.name.slice(0, 1).toUpperCase()}
           </div>
-          <div className="min-w-0">
-            <h4 className="font-semibold text-sm text-foreground truncate">{category.name}</h4>
-            <span className="text-xs text-muted-foreground">
-              Đã chi {formatCurrency(spent)}
-            </span>
+          <div className="min-w-0 flex-1">
+            <h4 className="font-semibold text-sm sm:text-base text-foreground truncate">
+              {category.name}
+            </h4>
+            <p className="text-xs text-muted-foreground whitespace-nowrap">
+              Đã chi <span className="font-medium text-foreground">{formatCurrency(spent)}</span>
+            </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <Badge variant={statusBadgeVariant} className="text-xs px-2 py-0.5 font-medium">
-            {statusIcon}
-            {statusBadgeText}
-          </Badge>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onSetBudget(category, budget)}
-            className="h-8 px-2.5 rounded-lg text-muted-foreground hover:text-foreground touch-target"
-            aria-label={isBudgeted ? `Sửa ngân sách ${category.name}` : `Đặt ngân sách ${category.name}`}
-          >
-            {isBudgeted ? (
-              <>
-                <Edit2 className="w-3.5 h-3.5 mr-1" />
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {isBudgeted ? (
+            <>
+              <Badge variant={statusBadgeVariant} className="text-[11px] sm:text-xs px-2 py-0.5 font-medium whitespace-nowrap">
+                {statusIcon}
+                {statusBadgeText}
+              </Badge>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onSetBudget(category, budget)}
+                className="h-8 px-2 sm:px-2.5 rounded-lg text-muted-foreground hover:text-foreground touch-target"
+                aria-label={`Sửa ngân sách ${category.name}`}
+              >
+                <Edit2 className="w-3.5 h-3.5 sm:mr-1" />
                 <span className="text-xs hidden sm:inline">Sửa</span>
-              </>
-            ) : (
-              <>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Badge
+                variant="outline"
+                className="hidden sm:inline-flex text-xs px-2 py-0.5 font-medium text-muted-foreground"
+              >
+                Chưa đặt ngân sách
+              </Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onSetBudget(category, budget)}
+                className="h-8 px-2.5 rounded-lg text-primary border-primary/30 hover:bg-primary/5 hover:text-primary font-medium text-xs touch-target shrink-0"
+                aria-label={`Đặt ngân sách ${category.name}`}
+              >
                 <Plus className="w-3.5 h-3.5 mr-1" />
-                <span className="text-xs font-medium text-primary">Đặt hạn mức</span>
-              </>
-            )}
-          </Button>
+                <span>Đặt hạn mức</span>
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
       {isBudgeted && (
-        <div className="space-y-1.5 pt-1 border-t border-border/40">
+        <div className="space-y-1.5 pt-2 border-t border-border/40">
           <div className="flex justify-between items-center text-xs">
             <span className="text-muted-foreground">
               Hạn mức: <strong className="text-foreground">{formatCurrency(budgetLimit)}</strong>

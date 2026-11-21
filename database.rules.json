@@ -1,0 +1,290 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "users": {
+      ".indexOn": ["createdAt"],
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.token.role === 'admin')",
+        ".write": "auth != null && auth.uid === $uid && newData.exists() && (!data.exists() || data.child('status').val() !== 'locked')",
+        ".validate": "newData.hasChildren(['uid', 'email', 'displayName', 'role', 'status', 'createdAt', 'updatedAt'])",
+        "uid": {
+          ".validate": "newData.val() === $uid"
+        },
+        "email": {
+          ".validate": "newData.isString() && newData.val().length <= 254"
+        },
+        "displayName": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60"
+        },
+        "photoURL": {
+          ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 500)"
+        },
+        "providerId": {
+          ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 50)"
+        },
+        "role": {
+          ".validate": "(!data.exists() && newData.val() === 'member') || newData.val() === data.val()"
+        },
+        "status": {
+          ".validate": "(!data.exists() && newData.val() === 'active') || newData.val() === data.val()"
+        },
+        "createdAt": {
+          ".validate": "(!data.exists() && (newData.val() === now || (newData.isNumber() && newData.val() > 0))) || newData.val() === data.val()"
+        },
+        "updatedAt": {
+          ".validate": "newData.val() === now || (newData.isNumber() && newData.val() > 0)"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    "financial": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid && root.child('users/' + $uid + '/status').val() !== 'locked'",
+        ".write": "auth != null && auth.uid === $uid && root.child('users/' + $uid + '/status').val() !== 'locked'",
+
+        "accounts": {
+          "$id": {
+            ".validate": "newData.hasChildren(['name', 'type', 'openingBalance', 'createdAt', 'updatedAt'])",
+            "name": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60"
+            },
+            "type": {
+              ".validate": "newData.val() === 'cash' || newData.val() === 'bank' || newData.val() === 'ewallet' || newData.val() === 'savings'"
+            },
+            "openingBalance": {
+              ".validate": "newData.isNumber() && newData.val() % 1 === 0"
+            },
+            "note": {
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 300)"
+            },
+            "createdAt": {
+              ".validate": "(!data.exists() && (newData.val() === now || (newData.isNumber() && newData.val() > 0))) || newData.val() === data.val()"
+            },
+            "updatedAt": {
+              ".validate": "newData.val() === now || (newData.isNumber() && newData.val() > 0)"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+
+        "categories": {
+          "$id": {
+            ".validate": "newData.hasChildren(['name', 'type', 'icon', 'color', 'isDefault', 'createdAt', 'updatedAt'])",
+            "name": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60"
+            },
+            "type": {
+              ".validate": "newData.val() === 'income' || newData.val() === 'expense'"
+            },
+            "icon": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40"
+            },
+            "color": {
+              ".validate": "newData.isString() && newData.val().matches(/^#[0-9A-Fa-f]{6}$/)"
+            },
+            "isDefault": {
+              ".validate": "newData.isBoolean()"
+            },
+            "createdAt": {
+              ".validate": "(!data.exists() && (newData.val() === now || (newData.isNumber() && newData.val() > 0))) || newData.val() === data.val()"
+            },
+            "updatedAt": {
+              ".validate": "newData.val() === now || (newData.isNumber() && newData.val() > 0)"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+
+        "transactions": {
+          ".indexOn": ["date"],
+          "$id": {
+            ".validate": "newData.hasChildren(['type', 'amount', 'date', 'accountId', 'createdAt', 'updatedAt']) && ((newData.child('type').val() === 'transfer' && newData.hasChild('toAccountId') && !newData.hasChild('categoryId')) || (newData.child('type').val() !== 'transfer' && newData.hasChild('categoryId') && !newData.hasChild('toAccountId')))",
+            "type": {
+              ".validate": "newData.val() === 'income' || newData.val() === 'expense' || newData.val() === 'transfer'"
+            },
+            "amount": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() % 1 === 0"
+            },
+            "date": {
+              ".validate": "newData.isNumber() && newData.val() > 0"
+            },
+            "accountId": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 100"
+            },
+            "categoryId": {
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length >= 1 && newData.val().length <= 100)"
+            },
+            "toAccountId": {
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length >= 1 && newData.val().length <= 100 && newData.val() !== newData.parent().child('accountId').val())"
+            },
+            "note": {
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 500)"
+            },
+            "createdAt": {
+              ".validate": "(!data.exists() && (newData.val() === now || (newData.isNumber() && newData.val() > 0))) || newData.val() === data.val()"
+            },
+            "updatedAt": {
+              ".validate": "newData.val() === now || (newData.isNumber() && newData.val() > 0)"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+
+        "budgets": {
+          "$id": {
+            ".validate": "$id.matches(/^[0-9]{4}-(0[1-9]|1[0-2])_.+$/) && $id === newData.child('month').val() + '_' + newData.child('categoryId').val()",
+            "month": {
+              ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}-(0[1-9]|1[0-2])$/)"
+            },
+            "categoryId": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 100"
+            },
+            "amount": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() % 1 === 0"
+            },
+            "createdAt": {
+              ".validate": "(!data.exists() && (newData.val() === now || (newData.isNumber() && newData.val() > 0))) || newData.val() === data.val()"
+            },
+            "updatedAt": {
+              ".validate": "newData.val() === now || (newData.isNumber() && newData.val() > 0)"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+
+        "goals": {
+          "$id": {
+            ".validate": "newData.hasChildren(['name', 'targetAmount', 'savedAmount', 'createdAt', 'updatedAt'])",
+            "name": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 100"
+            },
+            "targetAmount": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() % 1 === 0"
+            },
+            "savedAmount": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() % 1 === 0"
+            },
+            "deadline": {
+              ".validate": "newData.isNumber() && newData.val() > 0"
+            },
+            "note": {
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 300)"
+            },
+            "createdAt": {
+              ".validate": "(!data.exists() && (newData.val() === now || (newData.isNumber() && newData.val() > 0))) || newData.val() === data.val()"
+            },
+            "updatedAt": {
+              ".validate": "newData.val() === now || (newData.isNumber() && newData.val() > 0)"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+
+        "debts": {
+          "$id": {
+            ".validate": "newData.hasChildren(['kind', 'personName', 'content', 'principal', 'paidAmount', 'createdAt', 'updatedAt'])",
+            "kind": {
+              ".validate": "newData.val() === 'borrowed' || newData.val() === 'lent'"
+            },
+            "personName": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 100"
+            },
+            "content": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 300"
+            },
+            "principal": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() % 1 === 0"
+            },
+            "paidAmount": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= newData.parent().child('principal').val() && newData.val() % 1 === 0"
+            },
+            "dueDate": {
+              ".validate": "newData.isNumber() && newData.val() > 0"
+            },
+            "note": {
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 300)"
+            },
+            "createdAt": {
+              ".validate": "(!data.exists() && (newData.val() === now || (newData.isNumber() && newData.val() > 0))) || newData.val() === data.val()"
+            },
+            "updatedAt": {
+              ".validate": "newData.val() === now || (newData.isNumber() && newData.val() > 0)"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      }
+    },
+
+    "defaultCategories": {
+      "$id": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.token.role === 'admin'",
+        ".validate": "newData.hasChildren(['name', 'type', 'icon', 'color', 'isDefault', 'updatedAt'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60"
+        },
+        "type": {
+          ".validate": "newData.val() === 'income' || newData.val() === 'expense'"
+        },
+        "icon": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40"
+        },
+        "color": {
+          ".validate": "newData.isString() && newData.val().matches(/^#[0-9A-Fa-f]{6}$/)"
+        },
+        "isDefault": {
+          ".validate": "newData.isBoolean()"
+        },
+        "updatedAt": {
+          ".validate": "newData.val() === now || (newData.isNumber() && newData.val() > 0)"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    "systemConfig": {
+      "app": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.token.role === 'admin' && newData.exists()",
+        ".validate": "newData.hasChildren(['budgetWarningThreshold', 'updatedAt'])",
+        "budgetWarningThreshold": {
+          ".validate": "newData.isNumber() && newData.val() >= 0.5 && newData.val() <= 1"
+        },
+        "updatedAt": {
+          ".validate": "newData.val() === now || (newData.isNumber() && newData.val() > 0)"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    "adminAuditLogs": {
+      ".indexOn": ["createdAt"],
+      "$logId": {
+        ".read": "auth != null && auth.token.role === 'admin'",
+        ".write": false
+      }
+    }
+  }
+}

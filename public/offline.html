@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monify – Ngoại tuyến</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      :root {
+        --primary: #0d9488;
+        --bg: #f8fafc;
+        --fg: #0f172a;
+        --muted: #64748b;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0f172a;
+          --fg: #f8fafc;
+          --muted: #94a3b8;
+        }
+      }
+      body {
+        margin: 0;
+        padding: 1.5rem;
+        font-family: system-ui, -apple-system, sans-serif;
+        background-color: var(--bg);
+        color: var(--fg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      .card {
+        max-width: 400px;
+        padding: 2rem;
+        background: transparent;
+      }
+      .icon-box {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        background-color: rgba(13, 148, 136, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+      }
+      h1 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+      }
+      p {
+        font-size: 0.875rem;
+        color: var(--muted);
+        line-height: 1.5;
+        margin: 0 0 1.5rem;
+      }
+      button {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      button:hover {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="icon-box">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+          <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+          <line x1="12" y1="20" x2="12.01" y2="20"></line>
+        </svg>
+      </div>
+      <h1>Mất kết nối Internet</h1>
+      <p>Ứng dụng không thể kết nối đến máy chủ. Vui lòng kiểm tra Wi-Fi hoặc dữ liệu di động của bạn và thử lại.</p>
+      <button onclick="window.location.reload()">Thử lại</button>
+    </div>
+  </body>
+</html>
+

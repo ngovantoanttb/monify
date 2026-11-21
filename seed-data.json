@@ -1,0 +1,24 @@
+{
+  "systemConfig": {
+    "app": {
+      "budgetWarningThreshold": 0.8,
+      "updatedAt": 1700000000000
+    }
+  },
+  "defaultCategories": {
+    "cat_1": { "name": "Ăn uống", "type": "expense", "icon": "Utensils", "color": "#EF4444", "isDefault": true, "updatedAt": 1700000000000 },
+    "cat_2": { "name": "Di chuyển", "type": "expense", "icon": "Car", "color": "#F97316", "isDefault": true, "updatedAt": 1700000000000 },
+    "cat_3": { "name": "Nhà cửa & Hóa đơn", "type": "expense", "icon": "Home", "color": "#3B82F6", "isDefault": true, "updatedAt": 1700000000000 },
+    "cat_4": { "name": "Mua sắm", "type": "expense", "icon": "ShoppingBag", "color": "#EC4899", "isDefault": true, "updatedAt": 1700000000000 },
+    "cat_5": { "name": "Sức khỏe", "type": "expense", "icon": "HeartPulse", "color": "#10B981", "isDefault": true, "updatedAt": 1700000000000 },
+    "cat_6": { "name": "Giải trí", "type": "expense", "icon": "Film", "color": "#8B5CF6", "isDefault": true, "updatedAt": 1700000000000 },
+    "cat_7": { "name": "Giáo dục", "type": "expense", "icon": "GraduationCap", "color": "#06B6D4", "isDefault": true, "updatedAt": 1700000000000 },
+    "cat_8": { "name": "Chi phí khác", "type": "expense", "icon": "MoreHorizontal", "color": "#6B7280", "isDefault": true, "updatedAt": 1700000000000 },
+    "cat_9": { "name": "Lương", "type": "income", "icon": "Banknote", "color": "#16A34A", "isDefault": true, "updatedAt": 1700000000000 },
+    "cat_10": { "name": "Thưởng", "type": "income", "icon": "Gift", "color": "#22C55E", "isDefault": true, "updatedAt": 1700000000000 },
+    "cat_11": { "name": "Đầu tư", "type": "income", "icon": "TrendingUp", "color": "#0D9488", "isDefault": true, "updatedAt": 1700000000000 },
+    "cat_12": { "name": "Phụ cấp", "type": "income", "icon": "Coins", "color": "#EAB308", "isDefault": true, "updatedAt": 1700000000000 },
+    "cat_13": { "name": "Thu nhập khác", "type": "income", "icon": "PlusCircle", "color": "#14B8A6", "isDefault": true, "updatedAt": 1700000000000 }
+  }
+}
+

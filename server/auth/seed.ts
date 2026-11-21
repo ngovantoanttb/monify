@@ -1,6 +1,6 @@
 import { adminDb } from '../firebase/admin'
-import { DEFAULT_ACCOUNTS, DEFAULT_SYSTEM_CATEGORIES } from '@shared/constants'
-import type { UserProfile } from '@shared/types'
+import { DEFAULT_ACCOUNTS, DEFAULT_SYSTEM_CATEGORIES } from '../../shared/constants'
+import type { UserProfile } from '../../shared/types'
 
 /**
  * Seed hồ sơ người dùng và dữ liệu mặc định trong 1 lần ghi nhiều đường dẫn (multi-path write)

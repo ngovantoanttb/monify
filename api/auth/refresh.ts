@@ -4,7 +4,7 @@ import { rotateSession } from '../../server/auth/session'
 import { signAccessToken } from '../../server/auth/jwt'
 import { adminAuth, adminDb } from '../../server/firebase/admin'
 import { validateOrigin, sendError, sendSuccess } from '../../server/auth/origin'
-import type { UserProfile, UserRole } from '@shared/types'
+import type { UserProfile, UserRole } from '../../shared/types'
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   const method = req.method?.toUpperCase()

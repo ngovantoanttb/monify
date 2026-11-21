@@ -5,7 +5,7 @@ import { createSession } from '../../server/auth/session'
 import { setAuthCookies } from '../../server/auth/cookie'
 import { validateOrigin, sendError, sendSuccess } from '../../server/auth/origin'
 import { seedUserProfileAndDefaults } from '../../server/auth/seed'
-import type { UserProfile, UserRole } from '@shared/types'
+import type { UserProfile, UserRole } from '../../shared/types'
 
 async function parseBody(req: IncomingMessage): Promise<any> {
   return new Promise((resolve) => {
@@ -24,20 +24,20 @@ async function parseBody(req: IncomingMessage): Promise<any> {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (req.method !== 'POST') {
-    return sendError(res, 405, 'METHOD_NOT_ALLOWED', 'Chỉ chấp nhận phương thức POST')
-  }
-
-  if (!validateOrigin(req, res)) {
-    return
-  }
-
-  const { idToken } = await parseBody(req)
-  if (!idToken || typeof idToken !== 'string') {
-    return sendError(res, 400, 'BAD_REQUEST', 'Thiếu Firebase ID token')
-  }
-
   try {
+    if (req.method !== 'POST') {
+      return sendError(res, 405, 'METHOD_NOT_ALLOWED', 'Chỉ chấp nhận phương thức POST')
+    }
+
+    if (!validateOrigin(req, res)) {
+      return
+    }
+
+    const { idToken } = await parseBody(req)
+    if (!idToken || typeof idToken !== 'string') {
+      return sendError(res, 400, 'BAD_REQUEST', 'Thiếu Firebase ID token')
+    }
+
     // 1. Xác thực ID token
     let uid = ''
     let email = ''

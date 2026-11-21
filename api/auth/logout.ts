@@ -22,25 +22,25 @@ async function parseBody(req: IncomingMessage): Promise<any> {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (req.method !== 'POST') {
-    return sendError(res, 405, 'METHOD_NOT_ALLOWED', 'Chỉ chấp nhận phương thức POST')
-  }
-
-  if (!validateOrigin(req, res)) {
-    return
-  }
-
-  // Luôn dọn sạch cookies xác thực trên mọi yêu cầu đăng xuất hợp lệ
-  clearAuthCookies(res)
-
-  const cookies = getCookies(req)
-  const accessToken = cookies.access_token
-  const refreshToken = cookies.refresh_token
-  const body = await parseBody(req)
-
-  let sid: string | undefined
-
   try {
+    if (req.method !== 'POST') {
+      return sendError(res, 405, 'METHOD_NOT_ALLOWED', 'Chỉ chấp nhận phương thức POST')
+    }
+
+    if (!validateOrigin(req, res)) {
+      return
+    }
+
+    // Luôn dọn sạch cookies xác thực trên mọi yêu cầu đăng xuất hợp lệ
+    clearAuthCookies(res)
+
+    const cookies = getCookies(req)
+    const accessToken = cookies.access_token
+    const refreshToken = cookies.refresh_token
+    const body = await parseBody(req)
+
+    let sid: string | undefined
+
     if (accessToken) {
       const payload = await verifyAccessToken(accessToken)
       if (payload?.sid) {

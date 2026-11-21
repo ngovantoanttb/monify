@@ -163,8 +163,9 @@ function getFirebaseAdminApp(): adminModule.app.App {
   }
 
   const databaseURL =
-    process.env.FIREBASE_DATABASE_URL || 'https://monify-default-rtdb.asia-southeast1.firebasedatabase.app'
-  const projectId = process.env.FIREBASE_PROJECT_ID || 'monify'
+    process.env.FIREBASE_DATABASE_URL ||
+    'https://monify-f0597-default-rtdb.asia-southeast1.firebasedatabase.app'
+  const projectId = process.env.FIREBASE_PROJECT_ID || 'monify-f0597'
 
   if (process.env.FIREBASE_DATABASE_EMULATOR_HOST || process.env.FIREBASE_AUTH_EMULATOR_HOST) {
     return admin.initializeApp({
@@ -175,20 +176,31 @@ function getFirebaseAdminApp(): adminModule.app.App {
 
   // Production/Staging credentials from environment variables
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
+  let privateKey = process.env.FIREBASE_PRIVATE_KEY
 
   if (clientEmail && privateKey) {
-    return admin.initializeApp({
-      credential: admin.credential.cert({
+    try {
+      privateKey = privateKey.replace(/\\n/g, '\n').trim()
+      if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+        privateKey = privateKey.slice(1, -1)
+      }
+      return admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId,
+          clientEmail,
+          privateKey,
+        }),
+        databaseURL,
+      })
+    } catch (certErr) {
+      console.warn('[Firebase Admin] Initialization with cert failed, falling back to project ID:', certErr)
+      return admin.initializeApp({
         projectId,
-        clientEmail,
-        privateKey,
-      }),
-      databaseURL,
-    })
+      })
+    }
   }
 
-  // Fallback an toàn cho môi trường dev: KHÔNG truyền databaseURL để tránh polling metadata.google.internal
+  // Fallback an toàn: khởi tạo với projectId
   return admin.initializeApp({
     projectId,
   })

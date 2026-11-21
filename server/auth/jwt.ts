@@ -1,5 +1,5 @@
 import { SignJWT, jwtVerify } from 'jose'
-import type { JWTPayloadCustom, UserRole } from '@shared/types'
+import type { JWTPayloadCustom, UserRole } from '../../shared/types'
 
 const JWT_SECRET = process.env.AUTH_JWT_SECRET || 'dev-super-secret-jwt-key-must-be-at-least-32-chars-long!!'
 const ISSUER = process.env.AUTH_ISSUER || 'monify-auth'

@@ -7,34 +7,52 @@ const APP_URL = process.env.APP_URL || 'http://localhost:3000'
  * Ngăn chặn tấn công CSRF
  */
 export function validateOrigin(req: IncomingMessage, res: ServerResponse): boolean {
-  const method = req.method?.toUpperCase() || ''
-  if (!['POST', 'PATCH', 'DELETE', 'PUT'].includes(method)) {
-    return true
-  }
-
-  const origin = req.headers.origin || req.headers.referer
-  if (!origin) {
-    // Nếu request không có origin hoặc referer khi đổi dữ liệu
-    // Cho phép trong môi trường test/development nếu cấu hình cho phép
-    if (process.env.NODE_ENV === 'test') return true
-    sendError(res, 403, 'ORIGIN_REQUIRED', 'Yêu cầu header Origin hợp lệ')
-    return false
-  }
-
   try {
-    const originUrl = new URL(origin).origin
-    const expectedUrl = new URL(APP_URL).origin
+    const method = req.method?.toUpperCase() || ''
+    if (!['POST', 'PATCH', 'DELETE', 'PUT'].includes(method)) {
+      return true
+    }
 
-    // Cho phép localhost trong môi trường dev/staging
+    const origin = (req.headers.origin as string) || (req.headers.referer as string)
+    if (!origin) {
+      if (process.env.NODE_ENV === 'test') return true
+      sendError(res, 403, 'ORIGIN_REQUIRED', 'Yêu cầu header Origin hợp lệ')
+      return false
+    }
+
+    let originUrl = ''
+    try {
+      originUrl = new URL(origin).origin
+    } catch {
+      sendError(res, 403, 'INVALID_ORIGIN', 'Định dạng Origin không hợp lệ')
+      return false
+    }
+
+    const host = (req.headers['x-forwarded-host'] as string) || req.headers.host
+    const proto = (req.headers['x-forwarded-proto'] as string) || (host?.includes('localhost') ? 'http' : 'https')
+    const currentOrigin = host ? `${proto}://${host}` : ''
+
+    let expectedUrl = ''
+    try {
+      const target = APP_URL.startsWith('http') ? APP_URL : `https://${APP_URL}`
+      expectedUrl = new URL(target).origin
+    } catch {
+      expectedUrl = ''
+    }
+
+    const isMatchHost = Boolean(currentOrigin && originUrl === currentOrigin)
+    const isVercel = originUrl.endsWith('.vercel.app')
+    const isAppUrl = Boolean(expectedUrl && originUrl === expectedUrl)
     const isLocal = originUrl.includes('localhost') || originUrl.includes('127.0.0.1')
-    if (originUrl === expectedUrl || (process.env.NODE_ENV !== 'production' && isLocal)) {
+
+    if (isMatchHost || isVercel || isAppUrl || isLocal) {
       return true
     }
 
     sendError(res, 403, 'INVALID_ORIGIN', 'Origin không khớp với địa chỉ ứng dụng')
     return false
-  } catch {
-    sendError(res, 403, 'INVALID_ORIGIN', 'Định dạng Origin không hợp lệ')
+  } catch (err: any) {
+    sendError(res, 500, 'ORIGIN_ERROR', err?.message || 'Lỗi kiểm tra Origin')
     return false
   }
 }

@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'http'
 import { requireAdmin } from '../../../server/auth/guards'
 import { adminDb } from '../../../server/firebase/admin'
 import { sendError, sendJson } from '../../../server/auth/origin'
-import type { UserProfile } from '@shared/types'
+import type { UserProfile } from '../../../shared/types'
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== 'GET') {

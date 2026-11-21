@@ -4,7 +4,7 @@ import { verifyAccessToken } from './jwt'
 import { adminDb, hasServiceAccount } from '../firebase/admin'
 import { devSessionStore } from './session'
 import { sendError } from './origin'
-import type { UserProfile, UserRole } from '@shared/types'
+import type { UserProfile, UserRole } from '../../shared/types'
 
 export interface AuthenticatedUser {
   uid: string

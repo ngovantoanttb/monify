@@ -1,5 +1,4 @@
 import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/finance'
 import { format } from 'date-fns'
@@ -32,17 +31,20 @@ export function TransactionCard({
   const isTransfer = transaction.type === 'transfer'
 
   return (
-    <Card className="p-3 sm:p-3.5 flex items-center justify-between hover:shadow-xs transition-shadow border-border/70 gap-2 sm:gap-3">
+    <Card
+      onClick={() => onEdit(transaction)}
+      className="p-3 sm:p-3.5 flex items-center justify-between hover:shadow-xs transition-all border-border/70 gap-2.5 sm:gap-4 cursor-pointer active:bg-accent/30 rounded-xl"
+    >
       {/* Cụm thông tin bên trái: Icon + Tên + Ví/Ghi chú */}
       <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
         {/* Type Icon */}
         <div
           className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 shadow-xs ${
             isIncome
-              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
+              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400'
               : isExpense
-              ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400'
-              : 'bg-sky-100 text-sky-700 dark:bg-sky-950/40 dark:text-sky-400'
+              ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-400'
+              : 'bg-sky-100 text-sky-700 dark:bg-sky-950/50 dark:text-sky-400'
           }`}
         >
           {isIncome && <ArrowDownLeft className="w-4 h-4 sm:w-5 sm:h-5" />}
@@ -50,25 +52,22 @@ export function TransactionCard({
           {isTransfer && <ArrowRightLeft className="w-4 h-4 sm:w-5 sm:h-5" />}
         </div>
 
-        {/* Info */}
+        {/* Text Info */}
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h4 className="font-semibold text-sm sm:text-base text-foreground truncate">
-              {isTransfer
-                ? `Chuyển ví: ${fromAccount?.name || 'Ví'} ➔ ${toAccount?.name || 'Ví'}`
-                : category?.name || 'Chưa phân loại'}
-            </h4>
-            <Badge variant="secondary" className="hidden sm:inline-flex text-[10px] px-1.5 py-0 shrink-0">
-              {formattedDate}
-            </Badge>
-          </div>
+          <h4 className="font-semibold text-sm sm:text-base text-foreground truncate leading-tight">
+            {isTransfer
+              ? `Chuyển: ${fromAccount?.name || 'Ví'} ➔ ${toAccount?.name || 'Ví'}`
+              : category?.name || 'Chưa phân loại'}
+          </h4>
 
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5 min-w-0">
-            <span className="shrink-0">{isTransfer ? 'Chuyển khoản' : fromAccount?.name || 'Ví'}</span>
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1 min-w-0">
+            <span className="truncate max-w-[90px] sm:max-w-[150px]">
+              {isTransfer ? 'Chuyển khoản' : fromAccount?.name || 'Ví'}
+            </span>
             {transaction.note && (
               <>
-                <span className="shrink-0">•</span>
-                <span className="truncate italic max-w-[120px] sm:max-w-xs">{transaction.note}</span>
+                <span className="shrink-0 text-muted-foreground/60">•</span>
+                <span className="truncate italic max-w-[110px] sm:max-w-xs">{transaction.note}</span>
               </>
             )}
           </div>
@@ -76,10 +75,10 @@ export function TransactionCard({
       </div>
 
       {/* Cụm bên phải: Số tiền & Ngày (mobile) & Thao tác */}
-      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
         <div className="text-right">
           <div
-            className={`font-bold text-sm sm:text-base whitespace-nowrap ${
+            className={`font-bold text-sm sm:text-base whitespace-nowrap tracking-tight ${
               isIncome
                 ? 'text-emerald-600 dark:text-emerald-400'
                 : isExpense
@@ -90,12 +89,12 @@ export function TransactionCard({
             {isIncome ? '+' : isExpense ? '-' : ''}
             {formatCurrency(transaction.amount)}
           </div>
-          <span className="text-[11px] text-muted-foreground block sm:hidden whitespace-nowrap">
+          <div className="text-[11px] text-muted-foreground whitespace-nowrap mt-0.5 font-medium">
             {formattedDate}
-          </span>
+          </div>
         </div>
 
-        <div className="flex items-center -mr-1 sm:mr-0">
+        <div className="flex items-center -mr-1" onClick={(e) => e.stopPropagation()}>
           <Button
             variant="ghost"
             size="icon"

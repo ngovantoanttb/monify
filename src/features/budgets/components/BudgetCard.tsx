@@ -55,8 +55,8 @@ export function BudgetCard({
 
   return (
     <Card className="p-3.5 sm:p-4 space-y-3 hover:shadow-xs transition-shadow border-border/70">
-      <div className="flex items-center justify-between gap-2.5">
-        <div className="flex items-center gap-3 min-w-0 flex-1">
+      <div className="flex items-center justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-xs"
             style={{ backgroundColor: category.color }}
@@ -64,10 +64,10 @@ export function BudgetCard({
             {category.name.slice(0, 1).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <h4 className="font-semibold text-sm sm:text-base text-foreground truncate">
+            <h4 className="font-semibold text-sm sm:text-base text-foreground truncate leading-tight">
               {category.name}
             </h4>
-            <p className="text-xs text-muted-foreground whitespace-nowrap">
+            <p className="text-xs text-muted-foreground whitespace-nowrap mt-1">
               Đã chi <span className="font-medium text-foreground">{formatCurrency(spent)}</span>
             </p>
           </div>

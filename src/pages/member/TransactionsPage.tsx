@@ -298,13 +298,13 @@ export function TransactionsPage() {
         </div>
 
         {/* Thanh chọn ngày nhanh (Quick Date Filter Pills) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5 text-xs">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5 text-xs -mx-4 px-4 sm:mx-0 sm:px-0">
           {quickDatePills.map((pill) => (
             <button
               key={pill.key}
               type="button"
               onClick={pill.onClick}
-              className={`px-3 py-1.5 rounded-full font-medium whitespace-nowrap border transition-all ${
+              className={`px-3 py-1.5 rounded-full font-medium whitespace-nowrap border transition-all shrink-0 ${
                 pill.isActive
                   ? 'bg-primary text-primary-foreground border-primary shadow-sm font-semibold'
                   : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-accent'

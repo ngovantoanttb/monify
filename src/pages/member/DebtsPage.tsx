@@ -251,34 +251,37 @@ export function DebtsPage() {
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0">
             <button
+              type="button"
               onClick={() => setActiveTab('all')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeTab === 'all'
                   ? 'bg-primary text-primary-foreground shadow-xs'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
               Tất cả ({debts.length})
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('unsettled')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeTab === 'unsettled'
                   ? 'bg-primary text-primary-foreground shadow-xs'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
               Chưa tất toán
             </button>
             {summaryStats.overdueCount > 0 && (
               <button
+                type="button"
                 onClick={() => setActiveTab('overdue')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target flex items-center gap-1 ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all flex items-center gap-1.5 ${
                   activeTab === 'overdue'
                     ? 'bg-destructive text-destructive-foreground shadow-xs'
-                    : 'bg-destructive/10 text-destructive hover:bg-destructive/20'
+                    : 'bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20'
                 }`}
               >
                 <AlertCircle className="w-3.5 h-3.5" />
@@ -286,31 +289,36 @@ export function DebtsPage() {
               </button>
             )}
             <button
+              type="button"
               onClick={() => setActiveTab('lent')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeTab === 'lent'
                   ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
-              Tôi cho vay
+              <span className="sm:hidden">Cho vay</span>
+              <span className="hidden sm:inline">Tôi cho vay</span>
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('borrowed')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeTab === 'borrowed'
                   ? 'bg-amber-600 text-white shadow-xs'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
-              Tôi vay
+              <span className="sm:hidden">Đi vay</span>
+              <span className="hidden sm:inline">Tôi vay</span>
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('settled')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeTab === 'settled'
                   ? 'bg-primary text-primary-foreground shadow-xs'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
               Đã tất toán

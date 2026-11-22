@@ -213,33 +213,37 @@ export function GoalsPage() {
           )}
 
           {/* Filter Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0">
             <button
+              type="button"
               onClick={() => setActiveTab('all')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeTab === 'all'
                   ? 'bg-primary text-primary-foreground shadow-xs'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
               Tất cả ({goals.length})
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('active')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeTab === 'active'
                   ? 'bg-primary text-primary-foreground shadow-xs'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
-              Đang tiết kiệm ({goals.length - stats.completedCount})
+              <span className="sm:hidden">Đang tiết kiệm ({goals.length - stats.completedCount})</span>
+              <span className="hidden sm:inline">Đang tiết kiệm ({goals.length - stats.completedCount})</span>
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('completed')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeTab === 'completed'
                   ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
               Đã hoàn thành ({stats.completedCount})

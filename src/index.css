@@ -99,6 +99,18 @@ textarea {
   font-size: 16px !important;
 }
 
+/* Hide scrollbars across all browsers while allowing scrolling */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+}
+
+.no-scrollbar,
+.scrollbar-none {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+}
+
 /* Date & time picker indicator in dark mode */
 .dark input[type="date"],
 .dark input[type="time"],

@@ -234,43 +234,48 @@ export function BudgetsPage() {
           <BudgetSummaryCard {...summaryStats} />
 
           {/* Filter Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0">
             <button
+              type="button"
               onClick={() => setActiveTab('all')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeTab === 'all'
                   ? 'bg-primary text-primary-foreground shadow-xs'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
               Tất cả ({expenseCategories.length})
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('budgeted')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeTab === 'budgeted'
                   ? 'bg-primary text-primary-foreground shadow-xs'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
-              Đã đặt hạn mức ({expenseCategories.length - summaryStats.unbudgetedCount})
+              <span className="sm:hidden">Đã đặt ({expenseCategories.length - summaryStats.unbudgetedCount})</span>
+              <span className="hidden sm:inline">Đã đặt hạn mức ({expenseCategories.length - summaryStats.unbudgetedCount})</span>
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('attention')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeTab === 'attention'
                   ? 'bg-amber-600 text-white shadow-xs'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
               Cần chú ý ({summaryStats.exceededCount + summaryStats.warningCount})
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('unbudgeted')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-target ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeTab === 'unbudgeted'
                   ? 'bg-primary text-primary-foreground shadow-xs'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
               Chưa đặt ({summaryStats.unbudgetedCount})

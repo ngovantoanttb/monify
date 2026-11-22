@@ -107,7 +107,7 @@ export function TransactionDialog({
           <button
             type="button"
             onClick={() => handleTypeSelect('expense')}
-            className={`py-2 text-sm font-semibold rounded-lg transition-colors touch-target ${
+            className={`py-2 text-xs sm:text-sm font-semibold rounded-lg transition-colors touch-target text-center truncate px-1 ${
               selectedType === 'expense'
                 ? 'bg-red-600 text-white shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'
@@ -118,7 +118,7 @@ export function TransactionDialog({
           <button
             type="button"
             onClick={() => handleTypeSelect('income')}
-            className={`py-2 text-sm font-semibold rounded-lg transition-colors touch-target ${
+            className={`py-2 text-xs sm:text-sm font-semibold rounded-lg transition-colors touch-target text-center truncate px-1 ${
               selectedType === 'income'
                 ? 'bg-green-600 text-white shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'
@@ -129,7 +129,7 @@ export function TransactionDialog({
           <button
             type="button"
             onClick={() => handleTypeSelect('transfer')}
-            className={`py-2 text-sm font-semibold rounded-lg transition-colors touch-target ${
+            className={`py-2 text-xs sm:text-sm font-semibold rounded-lg transition-colors touch-target text-center truncate px-1 ${
               selectedType === 'transfer'
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'

@@ -137,7 +137,7 @@ export function DebtDialog({ isOpen, onClose, initialData, onSubmit }: DebtDialo
           <button
             type="button"
             onClick={() => handleKindSelect('borrowed')}
-            className={`py-2 text-sm font-semibold rounded-lg transition-colors touch-target ${
+            className={`py-2 text-xs sm:text-sm font-semibold rounded-lg transition-colors touch-target text-center truncate px-1.5 ${
               selectedKind === 'borrowed'
                 ? 'bg-amber-600 text-white shadow-xs'
                 : 'text-muted-foreground hover:text-foreground'
@@ -148,7 +148,7 @@ export function DebtDialog({ isOpen, onClose, initialData, onSubmit }: DebtDialo
           <button
             type="button"
             onClick={() => handleKindSelect('lent')}
-            className={`py-2 text-sm font-semibold rounded-lg transition-colors touch-target ${
+            className={`py-2 text-xs sm:text-sm font-semibold rounded-lg transition-colors touch-target text-center truncate px-1.5 ${
               selectedKind === 'lent'
                 ? 'bg-emerald-600 text-white shadow-xs'
                 : 'text-muted-foreground hover:text-foreground'

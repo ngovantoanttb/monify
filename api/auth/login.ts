@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http'
-import { adminAuth, adminDb } from '../../server/firebase/admin'
+import { adminAuth, adminDb, hasServiceAccount } from '../../server/firebase/admin'
 import { signAccessToken } from '../../server/auth/jwt'
 import { createSession } from '../../server/auth/session'
 import { setAuthCookies } from '../../server/auth/cookie'
@@ -82,26 +82,47 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
     }
 
-    // 2. Đọc hồ sơ người dùng
+    // 2. Đọc hồ sơ người dùng (ưu tiên RTDB REST API nếu local dev chưa có Service Account)
     let profile: UserProfile | null = null
-    try {
-      const userSnap = await adminDb.ref(`users/${uid}`).get()
-      if (userSnap.exists()) {
-        profile = userSnap.val() as UserProfile
+    if (!hasServiceAccount && idToken) {
+      try {
+        const rtdbUrl = process.env.FIREBASE_DATABASE_URL || ''
+        if (rtdbUrl) {
+          const rtdbRes = await fetch(`${rtdbUrl}/users/${uid}.json?auth=${idToken}`)
+          if (rtdbRes.ok) {
+            const data = (await rtdbRes.json()) as Record<string, any> | null
+            if (data && data.uid) {
+              profile = data as UserProfile
+            }
+          }
+        }
+      } catch {
+        // bỏ qua nếu lỗi mạng REST
       }
-    } catch {
-      // bỏ qua nếu adminDb chưa khởi tạo
+    }
+
+    if (!profile) {
+      try {
+        const userSnap = await adminDb.ref(`users/${uid}`).get()
+        if (userSnap.exists()) {
+          profile = userSnap.val() as UserProfile
+        }
+      } catch {
+        // bỏ qua nếu adminDb chưa khởi tạo
+      }
     }
 
     // Dự phòng đọc qua REST API với idToken nếu adminDb chưa có hồ sơ
     if (!profile && idToken) {
       try {
         const rtdbUrl = process.env.FIREBASE_DATABASE_URL || ''
-        const res = await fetch(`${rtdbUrl}/users/${uid}.json?auth=${idToken}`)
-        if (res.ok) {
-          const data = (await res.json()) as Record<string, any> | null
-          if (data && data.uid) {
-            profile = data as UserProfile
+        if (rtdbUrl) {
+          const res = await fetch(`${rtdbUrl}/users/${uid}.json?auth=${idToken}`)
+          if (res.ok) {
+            const data = (await res.json()) as Record<string, any> | null
+            if (data && data.uid) {
+              profile = data as UserProfile
+            }
           }
         }
       } catch {
@@ -142,41 +163,31 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
     }
 
-    // 3. Đọc vai trò (Custom Claims, RTDB role, hoặc cấu hình ADMIN_EMAILS)
-    const adminEmails = (process.env.ADMIN_EMAILS || '')
-      .split(',')
-      .map((e) => e.trim().toLowerCase())
-      .filter(Boolean)
-    const isEmailAdmin = Boolean(email && adminEmails.includes(email.toLowerCase()))
-
-    const role: UserRole =
-      (tokenRole as UserRole) === 'admin' || profile?.role === 'admin' || isEmailAdmin
+    // 3. Đọc vai trò từ hồ sơ RTDB (chỉ fallback sang Custom Claims nếu hồ sơ chưa có role)
+    const hasExplicitProfileRole = profile?.role === 'admin' || profile?.role === 'member'
+    const role: UserRole = hasExplicitProfileRole
+      ? profile!.role
+      : (tokenRole as UserRole) === 'admin'
         ? 'admin'
         : 'member'
 
     if (profile) {
       profile.role = role
+      if (!hasServiceAccount) {
+        try {
+          await adminDb.ref(`users/${uid}`).set(profile)
+        } catch {
+          // bỏ qua lỗi cache local
+        }
+      }
     }
 
-    // Nếu là admin và RTDB chưa ghi role admin, cập nhật ngay
-    if (role === 'admin' && profile) {
+    // Đồng bộ Custom Claims nếu không khớp với role trong RTDB
+    if (hasServiceAccount && tokenRole && tokenRole !== role) {
       try {
-        await adminDb.ref(`users/${uid}`).update({ role: 'admin' })
+        await adminAuth.setCustomUserClaims(uid, { role })
       } catch {
-        // bỏ qua nếu cập nhật adminDb thất bại
-      }
-      if (idToken) {
-        try {
-          const rtdbUrl =
-            process.env.FIREBASE_DATABASE_URL || ''
-          await fetch(`${rtdbUrl}/users/${uid}.json?auth=${idToken}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ role: 'admin' }),
-          })
-        } catch {
-          // bỏ qua nếu cập nhật REST thất bại
-        }
+        // bỏ qua nếu không có quyền cập nhật claims
       }
     }
 

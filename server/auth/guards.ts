@@ -82,15 +82,8 @@ export async function requireUser(req: IncomingMessage, res: ServerResponse): Pr
     }
   }
 
-  // Kiểm tra vai trò admin từ cấu hình ADMIN_EMAILS
-  const adminEmails = (process.env.ADMIN_EMAILS || '')
-    .split(',')
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean)
-  const isEmailAdmin = Boolean(profile.email && adminEmails.includes(profile.email.toLowerCase()))
-
   const effectiveRole: UserRole =
-    payload.role === 'admin' || profile.role === 'admin' || isEmailAdmin ? 'admin' : 'member'
+    payload.role === 'admin' || profile.role === 'admin' ? 'admin' : 'member'
 
   const authProfile: UserProfile = {
     ...profile,

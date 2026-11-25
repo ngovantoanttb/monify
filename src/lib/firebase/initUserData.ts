@@ -114,18 +114,7 @@ export async function ensureUserDataInitialized(
     const finalSnap = await get(userRef).catch(() => null)
     const dbVal = finalSnap?.val() || {}
 
-    const adminEmails = ((import.meta.env.VITE_ADMIN_EMAILS as string) || '')
-      .split(',')
-      .map((e: string) => e.trim().toLowerCase())
-      .filter(Boolean)
-    const isEmailAdmin = Boolean(email && adminEmails.includes(email.toLowerCase()))
-    const effectiveRole: UserRole =
-      dbVal?.role === 'admin' || isEmailAdmin ? 'admin' : (dbVal?.role || 'member')
-
-    // Nếu được định danh admin qua cấu hình mà RTDB chưa cập nhật, cập nhật ngay
-    if (isEmailAdmin && dbVal?.role !== 'admin') {
-      await update(userRef, { role: 'admin' }).catch(() => {})
-    }
+    const effectiveRole: UserRole = dbVal?.role === 'admin' ? 'admin' : 'member'
 
     return {
       uid,

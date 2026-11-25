@@ -90,5 +90,28 @@ describe('DebtCard Component Test', () => {
 
     expect(handlePayment).toHaveBeenCalledWith(mockDebt)
   })
+
+  it('gọi callback onSettle và onViewDetail khi nhấn Tất toán hoặc Chi tiết', async () => {
+    const user = userEvent.setup()
+    const handleSettle = vi.fn()
+    const handleViewDetail = vi.fn()
+
+    render(
+      <DebtCard
+        debt={mockDebt}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+        onPayment={vi.fn()}
+        onSettle={handleSettle}
+        onViewDetail={handleViewDetail}
+      />
+    )
+
+    await user.click(screen.getByRole('button', { name: /Tất toán/i }))
+    expect(handleSettle).toHaveBeenCalledWith(mockDebt)
+
+    await user.click(screen.getByRole('button', { name: /Chi tiết và lịch sử/i }))
+    expect(handleViewDetail).toHaveBeenCalledWith(mockDebt)
+  })
 })
 

@@ -422,7 +422,7 @@ export function LoginPage({ initialMode = 'login' }: LoginPageProps) {
                     aria-label="Email"
                     autoComplete="email"
                     disabled={isLoading}
-                    className="h-12 w-full rounded-lg bg-[#121524] border border-white/10 px-4 text-white placeholder:text-slate-500 focus:outline-none focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488] focus-visible:ring-1 focus-visible:ring-[#0D9488] focus-visible:ring-offset-0 text-sm sm:text-base transition-all"
+                    className="h-12 w-full rounded-lg bg-[#121524] border border-white/10 px-4 text-white placeholder:text-slate-500 focus:outline-none focus-visible:outline-none text-sm sm:text-base transition-all"
                     {...registerLogin('email')}
                   />
                   {loginErrors.email && (
@@ -438,7 +438,7 @@ export function LoginPage({ initialMode = 'login' }: LoginPageProps) {
                     aria-label="Mật khẩu"
                     autoComplete="current-password"
                     disabled={isLoading}
-                    className="h-12 w-full rounded-lg bg-[#121524] border border-white/10 px-4 pr-11 text-white placeholder:text-slate-500 focus:outline-none focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488] focus-visible:ring-1 focus-visible:ring-[#0D9488] focus-visible:ring-offset-0 text-sm sm:text-base transition-all"
+                    className="h-12 w-full rounded-lg bg-[#121524] border border-white/10 px-4 pr-11 text-white placeholder:text-slate-500 focus:outline-none focus-visible:outline-none text-sm sm:text-base transition-all"
                     {...registerLogin('password')}
                   />
                   <button
@@ -542,7 +542,7 @@ export function LoginPage({ initialMode = 'login' }: LoginPageProps) {
                     aria-label="Tên hiển thị"
                     autoComplete="name"
                     disabled={isLoading}
-                    className="h-12 w-full rounded-lg bg-[#121524] border border-white/10 px-4 text-white placeholder:text-slate-500 focus:outline-none focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488] focus-visible:ring-1 focus-visible:ring-[#0D9488] focus-visible:ring-offset-0 text-sm sm:text-base transition-all"
+                    className="h-12 w-full rounded-lg bg-[#121524] border border-white/10 px-4 text-white placeholder:text-slate-500 focus:outline-none focus-visible:outline-none text-sm sm:text-base transition-all"
                     {...registerReg('displayName')}
                   />
                   {regErrors.displayName && (
@@ -558,7 +558,7 @@ export function LoginPage({ initialMode = 'login' }: LoginPageProps) {
                     aria-label="Email"
                     autoComplete="email"
                     disabled={isLoading}
-                    className="h-12 w-full rounded-lg bg-[#121524] border border-white/10 px-4 text-white placeholder:text-slate-500 focus:outline-none focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488] focus-visible:ring-1 focus-visible:ring-[#0D9488] focus-visible:ring-offset-0 text-sm sm:text-base transition-all"
+                    className="h-12 w-full rounded-lg bg-[#121524] border border-white/10 px-4 text-white placeholder:text-slate-500 focus:outline-none focus-visible:outline-none text-sm sm:text-base transition-all"
                     {...registerReg('email')}
                   />
                   {regErrors.email && (
@@ -574,7 +574,7 @@ export function LoginPage({ initialMode = 'login' }: LoginPageProps) {
                     aria-label="Mật khẩu"
                     autoComplete="new-password"
                     disabled={isLoading}
-                    className="h-12 w-full rounded-lg bg-[#121524] border border-white/10 px-4 pr-11 text-white placeholder:text-slate-500 focus:outline-none focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488] focus-visible:ring-1 focus-visible:ring-[#0D9488] focus-visible:ring-offset-0 text-sm sm:text-base transition-all"
+                    className="h-12 w-full rounded-lg bg-[#121524] border border-white/10 px-4 pr-11 text-white placeholder:text-slate-500 focus:outline-none focus-visible:outline-none text-sm sm:text-base transition-all"
                     {...registerReg('password')}
                   />
                   <button
@@ -598,7 +598,7 @@ export function LoginPage({ initialMode = 'login' }: LoginPageProps) {
                     aria-label="Nhập lại mật khẩu"
                     autoComplete="new-password"
                     disabled={isLoading}
-                    className="h-12 w-full rounded-lg bg-[#121524] border border-white/10 px-4 pr-11 text-white placeholder:text-slate-500 focus:outline-none focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488] focus-visible:ring-1 focus-visible:ring-[#0D9488] focus-visible:ring-offset-0 text-sm sm:text-base transition-all"
+                    className="h-12 w-full rounded-lg bg-[#121524] border border-white/10 px-4 pr-11 text-white placeholder:text-slate-500 focus:outline-none focus-visible:outline-none text-sm sm:text-base transition-all"
                     {...registerReg('confirmPassword')}
                   />
                   <button

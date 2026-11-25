@@ -36,3 +36,22 @@ export const debtSchema = z
 
 export type DebtFormValues = z.infer<typeof debtSchema>
 
+export const createDebtSchema = debtSchema.and(
+  z.object({
+    accountId: z.string().min(1, 'Vui lòng chọn nguồn tiền để cộng/trừ'),
+  })
+)
+
+export type CreateDebtFormValues = z.infer<typeof createDebtSchema>
+
+export const debtPaymentSchema = z.object({
+  accountId: z.string().min(1, 'Vui lòng chọn nguồn tiền'),
+  mode: z.enum(['payment', 'settle']),
+  amount: z
+    .number({ invalid_type_error: 'Vui lòng nhập số tiền giao dịch' })
+    .int('Số tiền phải là số nguyên')
+    .positive('Số tiền giao dịch phải lớn hơn 0'),
+  note: z.string().max(500, 'Ghi chú tối đa 500 ký tự').optional().or(z.literal('')),
+})
+
+export type DebtPaymentFormValues = z.infer<typeof debtPaymentSchema>

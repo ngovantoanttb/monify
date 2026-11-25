@@ -12,6 +12,8 @@ import {
   evaluateDebtStatus,
   formatBudgetId,
   getMonthInterval,
+  isDebtTransaction,
+  filterRegularTransactions,
 } from '@/lib/finance/index'
 import type { Transaction } from '@shared/types'
 
@@ -280,6 +282,30 @@ describe('Finance Library Tests - 100% Coverage Target', () => {
       const interval = getMonthInterval(2026, 2) // Tháng 2/2026 không nhuận = 28 ngày
       expect(interval.start.getDate()).toBe(1)
       expect(interval.end.getDate()).toBe(28)
+    })
+  })
+
+  describe('isDebtTransaction & filterRegularTransactions', () => {
+    const txs: Transaction[] = [
+      { id: 't1', type: 'income', amount: 15000000, date: 1, accountId: 'acc1', note: 'Lương tháng 11', createdAt: 1, updatedAt: 1 },
+      { id: 't2', type: 'expense', amount: 500000, date: 2, accountId: 'acc1', note: 'Ăn trưa', createdAt: 1, updatedAt: 1 },
+      { id: 't3', type: 'income', amount: 5000000, date: 3, accountId: 'acc1', note: '[Vay tiền] Anh Nam', createdAt: 1, updatedAt: 1 },
+      { id: 't4', type: 'expense', amount: 2000000, date: 4, accountId: 'acc1', note: 'Ghi chú đã sửa tay', createdAt: 1, updatedAt: 1 },
+      { id: 't5', type: 'expense', amount: 1000000, date: 5, accountId: 'acc1', createdAt: 1, updatedAt: 1 },
+    ]
+
+    it('nhận diện giao dịch công nợ theo ID liên kết hoặc tiền tố note', () => {
+      const debtIds = new Set(['t4'])
+      expect(isDebtTransaction(txs[0]!, debtIds)).toBe(false)
+      expect(isDebtTransaction(txs[2]!, debtIds)).toBe(true) // theo prefix [Vay tiền]
+      expect(isDebtTransaction(txs[3]!, debtIds)).toBe(true) // theo debtTransactionIds
+      expect(isDebtTransaction(txs[4]!)).toBe(false) // note undefined, không có set
+    })
+
+    it('lọc chỉ giữ lại giao dịch thu chi riêng không tính công nợ', () => {
+      const debtIds = new Set(['t4'])
+      const regular = filterRegularTransactions(txs, debtIds)
+      expect(regular.map((t) => t.id)).toEqual(['t1', 't2', 't5'])
     })
   })
 })

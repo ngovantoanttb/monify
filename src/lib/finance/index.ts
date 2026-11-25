@@ -221,3 +221,36 @@ export function getMonthInterval(year: number, month: number): { start: Date; en
     end: endOfMonth(date),
   }
 }
+
+const DEBT_TRANSACTION_NOTE_PREFIXES = [
+  '[Vay tiền]',
+  '[Cho vay]',
+  '[Trả nợ]',
+  '[Thu hồi nợ]',
+  '[Tất toán nợ]',
+  '[Tất toán thu nợ]',
+]
+
+/**
+ * Kiểm tra giao dịch có phát sinh từ nghiệp vụ Công nợ hay không
+ */
+export function isDebtTransaction(
+  transaction: Pick<Transaction, 'id' | 'note'>,
+  debtTransactionIds?: Set<string>
+): boolean {
+  if (debtTransactionIds && debtTransactionIds.has(transaction.id)) {
+    return true
+  }
+  const note = (transaction.note || '').trim()
+  return DEBT_TRANSACTION_NOTE_PREFIXES.some((prefix) => note.startsWith(prefix))
+}
+
+/**
+ * Lọc danh sách giao dịch để chỉ giữ lại các giao dịch thu/chi/chuyển ví thông thường (không tính công nợ)
+ */
+export function filterRegularTransactions(
+  transactions: Transaction[],
+  debtTransactionIds?: Set<string>
+): Transaction[] {
+  return transactions.filter((t) => !isDebtTransaction(t, debtTransactionIds))
+}

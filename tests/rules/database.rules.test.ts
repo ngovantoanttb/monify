@@ -146,6 +146,35 @@ describe('Realtime Database Rules Structure & Constraint Validation', () => {
         expect(debtRules.paidAmount['.validate']).toContain("newData.val() <= newData.parent().child('principal').val()")
       })
     })
+
+    describe('debtHistories rules', () => {
+      const historiesNode = financialRules.debtHistories
+      const historyRules = historiesNode['$id']
+
+      it('khai báo chỉ mục .indexOn cho debtId và createdAt trên debtHistories', () => {
+        expect(historiesNode['.indexOn']).toContain('debtId')
+        expect(historiesNode['.indexOn']).toContain('createdAt')
+      })
+
+      it('ngăn xóa nhánh debtHistories và khóa bất biến mọi trường của bản ghi lịch sử đã tồn tại', () => {
+        expect(historiesNode['.validate']).toContain('!data.exists() || newData.exists()')
+        expect(historyRules['.validate']).toContain('!data.exists() || (')
+        expect(historyRules['.validate']).toContain("newData.child('debtId').val() === data.child('debtId').val()")
+        expect(historyRules['.validate']).toContain("newData.child('amount').val() === data.child('amount').val()")
+      })
+
+      it('ràng buộc loại giao dịch, actorUid === $uid và từ chối trường lạ', () => {
+        expect(historyRules.type['.validate']).toContain("'initial_borrow'")
+        expect(historyRules.type['.validate']).toContain("'initial_lend'")
+        expect(historyRules.type['.validate']).toContain("'repay'")
+        expect(historyRules.type['.validate']).toContain("'collect'")
+        expect(historyRules.type['.validate']).toContain("'settle_repay'")
+        expect(historyRules.type['.validate']).toContain("'settle_collect'")
+        expect(historyRules.type['.validate']).toContain("'adjustment'")
+        expect(historyRules.actorUid['.validate']).toContain('newData.val() === $uid')
+        expect(historyRules['$other']['.validate']).toBe(false)
+      })
+    })
   })
 
   describe('defaultCategories & systemConfig & adminAuditLogs rules', () => {

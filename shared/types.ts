@@ -77,6 +77,15 @@ export interface Goal {
 
 export type DebtKind = 'borrowed' | 'lent'
 
+export type DebtHistoryType =
+  | 'initial_borrow'
+  | 'initial_lend'
+  | 'repay'
+  | 'collect'
+  | 'settle_repay'
+  | 'settle_collect'
+  | 'adjustment'
+
 export interface Debt {
   id: string
   kind: DebtKind
@@ -88,6 +97,25 @@ export interface Debt {
   note?: string
   createdAt: number
   updatedAt: number
+}
+
+export interface DebtHistory {
+  id: string
+  debtId: string
+  transactionId?: string
+  idempotencyKey?: string
+  type: DebtHistoryType
+  hasCashFlow: boolean
+  amount: number
+  accountId?: string
+  accountName?: string
+  accountBalanceBefore?: number
+  accountBalanceAfter?: number
+  debtRemainingBefore: number
+  debtRemainingAfter: number
+  createdAt: number
+  actorUid: string
+  note?: string
 }
 
 export interface SystemConfig {

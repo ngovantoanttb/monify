@@ -117,7 +117,7 @@ export function ChangePasswordDialog({ isOpen, onClose }: ChangePasswordDialogPr
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Nhập mật khẩu mới (ít nhất 6 ký tự)"
                 autoComplete="new-password"
-                className="h-11 bg-[#101626] border-white/10 text-white placeholder:text-slate-500 rounded-xl pr-10 focus-visible:ring-amber-400 text-sm"
+                className="h-11 bg-[#101626] border-white/10 text-white placeholder:text-slate-500 rounded-xl pr-10 text-sm"
               />
               <button
                 type="button"
@@ -144,7 +144,7 @@ export function ChangePasswordDialog({ isOpen, onClose }: ChangePasswordDialogPr
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Nhập lại mật khẩu mới"
                 autoComplete="new-password"
-                className="h-11 bg-[#101626] border-white/10 text-white placeholder:text-slate-500 rounded-xl pr-10 focus-visible:ring-amber-400 text-sm"
+                className="h-11 bg-[#101626] border-white/10 text-white placeholder:text-slate-500 rounded-xl pr-10 text-sm"
               />
               <button
                 type="button"

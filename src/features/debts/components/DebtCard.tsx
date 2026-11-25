@@ -3,7 +3,18 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { formatCurrency, evaluateDebtStatus } from '@/lib/finance'
-import { ArrowDownLeft, ArrowUpRight, Calendar, CheckCircle2, AlertCircle, Edit2, Trash2, DollarSign } from 'lucide-react'
+import {
+  ArrowDownLeft,
+  ArrowUpRight,
+  Calendar,
+  CheckCircle2,
+  AlertCircle,
+  Edit2,
+  Trash2,
+  DollarSign,
+  History,
+  CheckCheck,
+} from 'lucide-react'
 import type { Debt } from '@shared/types'
 
 interface DebtCardProps {
@@ -11,13 +22,23 @@ interface DebtCardProps {
   onEdit: (debt: Debt) => void
   onDelete: (debt: Debt) => void
   onPayment: (debt: Debt) => void
+  onSettle?: (debt: Debt) => void
+  onViewDetail?: (debt: Debt) => void
 }
 
-export function DebtCard({ debt, onEdit, onDelete, onPayment }: DebtCardProps) {
+export function DebtCard({
+  debt,
+  onEdit,
+  onDelete,
+  onPayment,
+  onSettle,
+  onViewDetail,
+}: DebtCardProps) {
   const { remainingAmount, status } = evaluateDebtStatus(debt)
   const isLent = debt.kind === 'lent'
   const isSettled = status === 'settled'
-  const percentDisplay = debt.principal > 0 ? Math.min(100, Math.round((debt.paidAmount / debt.principal) * 100)) : 0
+  const percentDisplay =
+    debt.principal > 0 ? Math.min(100, Math.round((debt.paidAmount / debt.principal) * 100)) : 0
 
   let statusBadge = (
     <Badge variant="outline" className="text-xs">
@@ -26,7 +47,10 @@ export function DebtCard({ debt, onEdit, onDelete, onPayment }: DebtCardProps) {
   )
   if (status === 'settled') {
     statusBadge = (
-      <Badge variant="secondary" className="text-xs bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200">
+      <Badge
+        variant="secondary"
+        className="text-xs bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200"
+      >
         <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
         Đã tất toán
       </Badge>
@@ -50,7 +74,9 @@ export function DebtCard({ debt, onEdit, onDelete, onPayment }: DebtCardProps) {
   if (debt.dueDate) {
     const formattedDate = new Intl.DateTimeFormat('vi-VN').format(new Date(debt.dueDate))
     dueDisplay = (
-      <div className={`flex items-center gap-1.5 text-xs ${status === 'overdue' ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
+      <div
+        className={`flex items-center gap-1.5 text-xs ${status === 'overdue' ? 'text-destructive font-medium' : 'text-muted-foreground'}`}
+      >
         <Calendar className="w-3.5 h-3.5" />
         <span>Hạn: {formattedDate}</span>
       </div>
@@ -58,7 +84,12 @@ export function DebtCard({ debt, onEdit, onDelete, onPayment }: DebtCardProps) {
   }
 
   return (
-    <Card className="p-4 space-y-3.5 hover:shadow-xs transition-shadow border-border/70">
+    <Card
+      onClick={onViewDetail ? () => onViewDetail(debt) : undefined}
+      className={`p-4 space-y-3.5 hover:shadow-xs transition-shadow border-border/70 ${
+        onViewDetail ? 'cursor-pointer' : ''
+      }`}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2.5 min-w-0">
           <div
@@ -110,7 +141,9 @@ export function DebtCard({ debt, onEdit, onDelete, onPayment }: DebtCardProps) {
 
         <Progress
           value={percentDisplay}
-          indicatorClassName={isSettled ? 'bg-emerald-600' : isLent ? 'bg-emerald-500' : 'bg-amber-500'}
+          indicatorClassName={
+            isSettled ? 'bg-emerald-600' : isLent ? 'bg-emerald-500' : 'bg-amber-500'
+          }
           className="h-2"
         />
 
@@ -125,24 +158,54 @@ export function DebtCard({ debt, onEdit, onDelete, onPayment }: DebtCardProps) {
       </div>
 
       {/* Buttons */}
-      <div className="flex items-center justify-between pt-1 border-t border-border/40">
-        {!isSettled ? (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPayment(debt)}
-            className="h-8 px-2.5 text-xs font-medium text-primary hover:text-primary hover:bg-primary/10 touch-target"
-          >
-            <DollarSign className="w-3.5 h-3.5 mr-1" />
-            {isLent ? 'Ghi nhận thu nợ' : 'Ghi nhận trả nợ'}
-          </Button>
-        ) : (
-          <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
-            <CheckCircle2 className="w-3.5 h-3.5" /> Hoàn tất
-          </span>
-        )}
+      <div
+        className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-border/40"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex flex-wrap items-center gap-1.5">
+          {!isSettled ? (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onPayment(debt)}
+                className="h-8 px-2.5 text-xs font-medium text-primary hover:text-primary hover:bg-primary/10 touch-target"
+              >
+                <DollarSign className="w-3.5 h-3.5 mr-1" />
+                {isLent ? 'Ghi nhận thu nợ' : 'Ghi nhận trả nợ'}
+              </Button>
+              {onSettle && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onSettle(debt)}
+                  className="h-8 px-2.5 text-xs font-medium text-emerald-700 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/10 touch-target"
+                >
+                  <CheckCheck className="w-3.5 h-3.5 mr-1" />
+                  Tất toán
+                </Button>
+              )}
+            </>
+          ) : (
+            <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Hoàn tất
+            </span>
+          )}
+        </div>
 
         <div className="flex items-center gap-1">
+          {onViewDetail && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onViewDetail(debt)}
+              className="h-8 px-2 rounded-lg text-xs text-muted-foreground hover:text-foreground touch-target"
+              aria-label={`Chi tiết và lịch sử khoản nợ với ${debt.personName}`}
+            >
+              <History className="w-3.5 h-3.5 mr-1" />
+              <span className="hidden sm:inline">Chi tiết</span>
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -166,4 +229,3 @@ export function DebtCard({ debt, onEdit, onDelete, onPayment }: DebtCardProps) {
     </Card>
   )
 }
-

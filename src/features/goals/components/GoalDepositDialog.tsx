@@ -96,7 +96,7 @@ export function GoalDepositDialog({
               value={formattedAdd}
               onChange={handleAmountChange}
               autoFocus
-              className="flex h-12 w-full rounded-xl border border-input bg-background px-3 py-2 text-lg font-bold text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="flex h-12 w-full rounded-xl border border-input bg-background px-3 py-2 text-lg font-bold text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:outline-none"
             />
             <span className="absolute right-3.5 top-3 text-sm font-semibold text-muted-foreground pointer-events-none">
               VND

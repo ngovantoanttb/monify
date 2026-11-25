@@ -10,6 +10,7 @@ import { TransactionsPage } from '@/pages/member/TransactionsPage'
 import { BudgetsPage } from '@/pages/member/BudgetsPage'
 import { GoalsPage } from '@/pages/member/GoalsPage'
 import { DebtsPage } from '@/pages/member/DebtsPage'
+import { DebtDetailPage } from '@/pages/member/DebtDetailPage'
 import { ReportsPage } from '@/pages/member/ReportsPage'
 import { SettingsPage } from '@/pages/member/SettingsPage'
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
@@ -75,6 +76,10 @@ export const router = createBrowserRouter([
           {
             path: 'debts',
             element: <DebtsPage />,
+          },
+          {
+            path: 'debts/:debtId',
+            element: <DebtDetailPage />,
           },
           {
             path: 'reports',

@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { debtSchema } from '@/features/debts/schemas/debtSchema'
+import {
+  debtSchema,
+  createDebtSchema,
+  debtPaymentSchema,
+} from '@/features/debts/schemas/debtSchema'
 
 describe('debtSchema Test', () => {
   it('chấp nhận khoản nợ hợp lệ (Tôi vay và Tôi cho vay)', () => {
@@ -63,6 +67,68 @@ describe('debtSchema Test', () => {
     }
     const result = debtSchema.safeParse(invalid)
     expect(result.success).toBe(false)
+  })
+})
+
+describe('debtPaymentSchema Test', () => {
+  it('chấp nhận giao dịch trả/thu/tất toán hợp lệ', () => {
+    expect(
+      debtPaymentSchema.safeParse({
+        accountId: 'acc_1',
+        mode: 'payment',
+        amount: 500000,
+        note: 'Trả đợt 1',
+      }).success
+    ).toBe(true)
+
+    expect(
+      debtPaymentSchema.safeParse({
+        accountId: 'acc_2',
+        mode: 'settle',
+        amount: 2000000,
+        note: '',
+      }).success
+    ).toBe(true)
+  })
+
+  it('báo lỗi khi chưa chọn nguồn tiền hoặc số tiền không hợp lệ', () => {
+    const noAccount = debtPaymentSchema.safeParse({
+      accountId: '',
+      mode: 'payment',
+      amount: 500000,
+    })
+    expect(noAccount.success).toBe(false)
+
+    const zeroAmount = debtPaymentSchema.safeParse({
+      accountId: 'acc_1',
+      mode: 'payment',
+      amount: 0,
+    })
+    expect(zeroAmount.success).toBe(false)
+  })
+})
+
+describe('createDebtSchema Test', () => {
+  it('bắt buộc chọn nguồn tiền khi tạo mới khoản công nợ', () => {
+    const missingAccount = createDebtSchema.safeParse({
+      kind: 'borrowed',
+      personName: 'Anh A',
+      content: 'Vay tiền',
+      principal: 1000000,
+      paidAmount: 0,
+      accountId: '',
+    })
+    expect(missingAccount.success).toBe(false)
+
+    const valid = createDebtSchema.safeParse({
+      kind: 'lent',
+      personName: 'Bạn B',
+      content: 'Cho vay',
+      principal: 1000000,
+      paidAmount: 0,
+      accountId: 'acc_1',
+    })
+    expect(valid.success).toBe(true)
   })
 })
 

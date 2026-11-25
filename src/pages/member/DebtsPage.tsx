@@ -1,39 +1,51 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth'
 import { debtsService } from '@/features/debts/services/debts'
+import { accountsService } from '@/features/accounts/services/accounts'
+import { transactionsService } from '@/features/transactions/services/transactions'
 import { DebtCard } from '@/features/debts/components/DebtCard'
-import { DebtDialog } from '@/features/debts/components/DebtDialog'
-import { PaymentDialog } from '@/features/debts/components/PaymentDialog'
+import { DebtDialog, type DebtDialogSubmitValues } from '@/features/debts/components/DebtDialog'
+import { PaymentDialog, type PaymentSubmitPayload } from '@/features/debts/components/PaymentDialog'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { formatCurrency, evaluateDebtStatus } from '@/lib/finance'
+import { formatCurrency, evaluateDebtStatus, calculateAccountBalance } from '@/lib/finance'
 import { HandCoins, Plus, ArrowUpRight, ArrowDownLeft, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
-import type { Debt } from '@shared/types'
-import type { DebtFormValues } from '@/features/debts/schemas/debtSchema'
+import type { Account, Debt, Transaction } from '@shared/types'
 
 type DebtFilterTab = 'all' | 'lent' | 'borrowed' | 'overdue' | 'unsettled' | 'settled'
 
 export function DebtsPage() {
   const { user } = useAuthStore()
+  const navigate = useNavigate()
   const [debts, setDebts] = React.useState<Debt[]>([])
+  const [accounts, setAccounts] = React.useState<Account[]>([])
+  const [transactions, setTransactions] = React.useState<Transaction[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [activeTab, setActiveTab] = React.useState<DebtFilterTab>('all')
 
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
   const [editingDebt, setEditingDebt] = React.useState<Debt | null>(null)
   const [paymentDebt, setPaymentDebt] = React.useState<Debt | null>(null)
+  const [paymentMode, setPaymentMode] = React.useState<'payment' | 'settle'>('payment')
   const [deletingDebt, setDeletingDebt] = React.useState<Debt | null>(null)
 
   const loadDebts = React.useCallback(async () => {
     if (!user?.uid) return
     setIsLoading(true)
     try {
-      const data = await debtsService.getDebts(user.uid)
-      setDebts(data)
+      const [debtsData, accountsData, txsData] = await Promise.all([
+        debtsService.getDebts(user.uid),
+        accountsService.getAccounts(user.uid),
+        transactionsService.getAllTransactions(user.uid),
+      ])
+      setDebts(debtsData)
+      setAccounts(accountsData)
+      setTransactions(txsData)
     } catch {
       toast.error('Không thể tải danh sách công nợ')
     } finally {
@@ -44,6 +56,14 @@ export function DebtsPage() {
   React.useEffect(() => {
     loadDebts()
   }, [loadDebts])
+
+  const accountBalances: Record<string, number> = React.useMemo(() => {
+    const map: Record<string, number> = {}
+    accounts.forEach((acc) => {
+      map[acc.id] = calculateAccountBalance(acc.openingBalance, acc.id, transactions)
+    })
+    return map
+  }, [accounts, transactions])
 
   // Thống kê hai chiều: Phải thu (Tôi cho vay) và Phải trả (Tôi vay)
   const summaryStats = React.useMemo(() => {
@@ -82,30 +102,52 @@ export function DebtsPage() {
     }
   }, [debts])
 
-  const handleCreateOrUpdate = async (values: DebtFormValues) => {
+  const handleCreateOrUpdate = async (values: DebtDialogSubmitValues) => {
     if (!user?.uid) return
     try {
       if (editingDebt) {
         await debtsService.updateDebt(user.uid, editingDebt.id, values)
         toast.success('Cập nhật khoản nợ thành công')
       } else {
-        await debtsService.createDebt(user.uid, values)
-        toast.success('Tạo khoản nợ mới thành công')
+        await debtsService.createDebt(user.uid, {
+          ...values,
+          accountId: values.accountId || '',
+          idempotencyKey: values.idempotencyKey,
+        })
+        toast.success('Tạo khoản nợ và cập nhật số dư nguồn tiền thành công')
       }
       await loadDebts()
-    } catch {
-      toast.error('Có lỗi xảy ra khi lưu khoản nợ')
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Có lỗi xảy ra khi lưu khoản nợ')
+      throw err
     }
   }
 
-  const handleRecordPayment = async (debtId: string, amount: number) => {
+  const handleRecordPayment = async (payload: PaymentSubmitPayload) => {
     if (!user?.uid) return
     try {
-      await debtsService.recordPayment(user.uid, debtId, amount)
-      toast.success('Ghi nhận thanh toán thành công')
+      const result = await debtsService.executeDebtCashflow({
+        uid: user.uid,
+        debtId: payload.debtId,
+        accountId: payload.accountId,
+        amount: payload.amount,
+        mode: payload.mode,
+        note: payload.note,
+        idempotencyKey: payload.idempotencyKey,
+      })
+
+      if (result.deduplicated) {
+        toast.info('Giao dịch này đã được ghi nhận trước đó')
+      } else if (payload.mode === 'settle') {
+        toast.success('Tất toán khoản công nợ thành công')
+      } else {
+        toast.success('Ghi nhận thanh toán thành công')
+      }
+
       await loadDebts()
-    } catch {
-      toast.error('Không thể ghi nhận thanh toán')
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Không thể ghi nhận thanh toán')
+      throw err
     }
   }
 
@@ -116,8 +158,8 @@ export function DebtsPage() {
       toast.success('Đã xóa khoản nợ')
       setDeletingDebt(null)
       await loadDebts()
-    } catch {
-      toast.error('Không thể xóa khoản nợ')
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Không thể xóa khoản nợ')
     }
   }
 
@@ -358,7 +400,15 @@ export function DebtsPage() {
                     setIsDialogOpen(true)
                   }}
                   onDelete={(d) => setDeletingDebt(d)}
-                  onPayment={(d) => setPaymentDebt(d)}
+                  onPayment={(d) => {
+                    setPaymentMode('payment')
+                    setPaymentDebt(d)
+                  }}
+                  onSettle={(d) => {
+                    setPaymentMode('settle')
+                    setPaymentDebt(d)
+                  }}
+                  onViewDetail={(d) => navigate(`/debts/${d.id}`)}
                 />
               ))}
             </div>
@@ -374,14 +424,19 @@ export function DebtsPage() {
           setEditingDebt(null)
         }}
         initialData={editingDebt}
+        accounts={accounts}
+        accountBalances={accountBalances}
         onSubmit={handleCreateOrUpdate}
       />
 
-      {/* Dialog thanh toán nợ nhanh */}
+      {/* Dialog thanh toán / tất toán công nợ */}
       <PaymentDialog
         isOpen={!!paymentDebt}
         onClose={() => setPaymentDebt(null)}
         debt={paymentDebt}
+        accounts={accounts}
+        accountBalances={accountBalances}
+        initialMode={paymentMode}
         onRecordPayment={handleRecordPayment}
       />
 
@@ -391,7 +446,7 @@ export function DebtsPage() {
         onClose={() => setDeletingDebt(null)}
         onConfirm={handleDelete}
         title="Xóa khoản nợ"
-        description={`Bạn có chắc chắn muốn xóa khoản nợ với "${deletingDebt?.personName}"? Dữ liệu đã xóa không thể khôi phục.`}
+        description={`Bạn có chắc chắn muốn xóa khoản nợ với "${deletingDebt?.personName}"? Lưu ý: lịch sử giao dịch đã phát sinh vẫn được bảo toàn.`}
         confirmText="Xóa khoản nợ"
         isDestructive={true}
       />

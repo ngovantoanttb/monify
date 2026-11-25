@@ -50,9 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               const loginRes = await authApi.login(idToken)
               if (isMounted && loginRes?.user) {
                 const effectiveRole: UserRole =
-                  profile.role === 'admin' || loginRes.user.role === 'admin'
-                    ? 'admin'
-                    : (loginRes.user.role || profile.role || 'member')
+                  profile.role || loginRes.user.role || 'member'
                 setUser({
                   ...profile,
                   ...loginRes.user,

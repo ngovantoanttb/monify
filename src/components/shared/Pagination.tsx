@@ -77,7 +77,7 @@ export function Pagination({
           onFocus={(e) => e.target.select()}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
-          className="w-12 sm:w-14 h-8 text-center rounded-lg border border-border/80 dark:border-white/20 bg-background dark:bg-[#181d2c] text-foreground dark:text-white font-medium text-sm sm:text-base focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+          className="w-12 sm:w-14 h-8 text-center rounded-lg border border-border/80 dark:border-white/20 bg-background dark:bg-[#181d2c] text-foreground dark:text-white font-medium text-sm sm:text-base focus:outline-none transition-all"
           aria-label="Số trang hiện tại"
         />
         <span className="text-sm sm:text-base font-normal tracking-wide">/ {safeTotalPages}</span>

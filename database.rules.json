@@ -229,6 +229,62 @@
               ".validate": false
             }
           }
+        },
+
+        "debtHistories": {
+          ".indexOn": ["debtId", "createdAt"],
+          ".validate": "!data.exists() || newData.exists()",
+          "$id": {
+            ".validate": "newData.hasChildren(['debtId', 'type', 'hasCashFlow', 'amount', 'debtRemainingBefore', 'debtRemainingAfter', 'createdAt', 'actorUid']) && (!data.exists() || (newData.child('debtId').val() === data.child('debtId').val() && newData.child('type').val() === data.child('type').val() && newData.child('hasCashFlow').val() === data.child('hasCashFlow').val() && newData.child('amount').val() === data.child('amount').val() && newData.child('debtRemainingBefore').val() === data.child('debtRemainingBefore').val() && newData.child('debtRemainingAfter').val() === data.child('debtRemainingAfter').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('actorUid').val() === data.child('actorUid').val() && newData.child('transactionId').val() === data.child('transactionId').val() && newData.child('idempotencyKey').val() === data.child('idempotencyKey').val() && newData.child('accountId').val() === data.child('accountId').val() && newData.child('accountName').val() === data.child('accountName').val() && newData.child('accountBalanceBefore').val() === data.child('accountBalanceBefore').val() && newData.child('accountBalanceAfter').val() === data.child('accountBalanceAfter').val() && newData.child('note').val() === data.child('note').val()))",
+            "debtId": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 100"
+            },
+            "transactionId": {
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length >= 1 && newData.val().length <= 100)"
+            },
+            "idempotencyKey": {
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length >= 1 && newData.val().length <= 120)"
+            },
+            "type": {
+              ".validate": "newData.val() === 'initial_borrow' || newData.val() === 'initial_lend' || newData.val() === 'repay' || newData.val() === 'collect' || newData.val() === 'settle_repay' || newData.val() === 'settle_collect' || newData.val() === 'adjustment'"
+            },
+            "hasCashFlow": {
+              ".validate": "newData.isBoolean()"
+            },
+            "amount": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() % 1 === 0 && (newData.parent().child('type').val() === 'adjustment' || newData.val() > 0)"
+            },
+            "accountId": {
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length >= 1 && newData.val().length <= 100)"
+            },
+            "accountName": {
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 100)"
+            },
+            "accountBalanceBefore": {
+              ".validate": "!newData.exists() || (newData.isNumber() && newData.val() % 1 === 0)"
+            },
+            "accountBalanceAfter": {
+              ".validate": "!newData.exists() || (newData.isNumber() && newData.val() % 1 === 0)"
+            },
+            "debtRemainingBefore": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() % 1 === 0"
+            },
+            "debtRemainingAfter": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() % 1 === 0"
+            },
+            "createdAt": {
+              ".validate": "newData.val() === now || (newData.isNumber() && newData.val() > 0)"
+            },
+            "actorUid": {
+              ".validate": "newData.isString() && newData.val() === $uid"
+            },
+            "note": {
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 500)"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
         }
       }
     },

@@ -293,7 +293,7 @@ export function SettingsPage() {
                 }}
                 tabIndex={0}
                 role="button"
-                className="relative group shrink-0 self-start sm:self-center cursor-pointer rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
+                className="relative group shrink-0 self-start sm:self-center cursor-pointer rounded-full focus:outline-none"
                 title="Nhấn để đổi ảnh đại diện"
                 aria-label="Đổi ảnh đại diện"
               >
